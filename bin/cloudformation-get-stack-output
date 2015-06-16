@@ -40,4 +40,4 @@ result = connection.describe_stacks(args.stack_name)
 
 for output in result[0].outputs:
     if output.key == args.output_key_name:
-        print output.value
+        sys.stdout.write(output.value)
