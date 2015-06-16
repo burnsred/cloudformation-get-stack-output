@@ -1,0 +1,43 @@
+#!/usr/bin/env python
+
+import argparse
+import os
+import sys
+
+from boto import cloudformation
+
+parser = argparse.ArgumentParser(
+    description='Get the value of an output variable for a CloudFormation stack'
+)
+
+parser.add_argument(
+    '--region',
+    action='store',
+    required=True
+)
+
+parser.add_argument(
+    '--stack-name',
+    action='store',
+    required=True
+)
+
+parser.add_argument(
+    '--output-key-name',
+    action='store',
+    required=True
+)
+
+args = parser.parse_args()
+
+connection = cloudformation.connect_to_region(
+    args.region,
+    aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'],
+    aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY']
+)
+
+result = connection.describe_stacks(args.stack_name)
+
+for output in result[0].outputs:
+    if output.key == args.output_key_name:
+        print output.value
